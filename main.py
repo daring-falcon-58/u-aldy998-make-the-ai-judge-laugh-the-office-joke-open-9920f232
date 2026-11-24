@@ -24,8 +24,16 @@ def main() -> None:
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
+    data = JOKE.encode("utf-8")
     with open(path, "wb") as f:
-        f.write(JOKE.encode("utf-8"))
+        f.write(data)
+    # Self-check: read the file back and confirm the bytes on disk are
+    # exactly the joke — a second, genuine write-path verification that
+    # changes nothing about the output (still 70 bytes, no newline).
+    with open(path, "rb") as f:
+        written = f.read()
+    if written != data:
+        raise ValueError("entry.txt bytes do not match the joke")
 
 
 if __name__ == "__main__":
